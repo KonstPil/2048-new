@@ -1,8 +1,9 @@
+@import url("https://fonts.googleapis.com/css?family=Fredoka+One");
+
 *{
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: Arial, Helvetica, sans-serif;
 }
 .playfield{
   position: relative;
@@ -41,6 +42,11 @@ justify-content: space-between;
   width: 105px;
   height: 105px;
   border-radius: 5px;
+  transition: 100ms ease-in-out;
+  transition-property: top,left;
+  color: black;
+  text-align: center;
+  font: 48px/104px "Fredoka One", cursive;
 }
 .tile-position-1-1{
   position: absolute;
@@ -129,4 +135,96 @@ justify-content: space-between;
   position: absolute;
   left:345px;
   top:345px;
+}
+
+.t2 {
+  z-index: 1;
+  background: #e5fd5efb;
+  transition: 0.3s;
+}
+.t2:after {
+  z-index: 1;
+  content: "2";
+}
+.t4 {
+  z-index: 1;
+  background: #96fd20;
+}
+.t4:after {
+  z-index: 1;
+  content: "4";
+}
+.t8 {
+  z-index: 1;
+  background: #00ff62;
+}
+.t8:after {
+  z-index: 1;
+  content: "8";
+}
+.t16 {
+  z-index: 1;
+  background: #1cd604;
+}
+.t16:after {
+  z-index: 1;
+  content: "16";
+}
+.t32 {
+  z-index: 1;
+  background: rgb(64, 199, 159);
+}
+.t32:after {
+  z-index: 1;
+  content: "32";
+}
+.t64 {
+  z-index: 1;
+  background: rgb(60, 142, 175);
+}
+.t64:after {
+  z-index: 1;
+  content: "64";
+}
+.t128 {
+  z-index: 1;
+  background: #3b38f5c7;
+}
+.t128:after {
+  z-index: 1;
+  content: "128";
+}
+.t256 {
+  z-index: 1;
+  background: #a60efd;
+}
+.t256:after {
+  z-index: 1;
+  content: "256";
+}
+.t512 {
+  z-index: 1;
+  background: #b712d4;
+}
+.t512:after {
+  z-index: 1;
+  content: "512";
+}
+.t1024 {
+  z-index: 1;
+  background: #800179;
+  font-size: 36px;
+}
+.t1024:after {
+  z-index: 1;
+  content: "1024";
+}
+.t2048 {
+  z-index: 1;
+  background: #ad0051;
+  font-size: 36px;
+}
+.t2048:after {
+  z-index: 1;
+  content: "2048";
 }
