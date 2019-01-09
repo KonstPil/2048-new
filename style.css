@@ -1,0 +1,132 @@
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.playfield{
+  position: relative;
+  left: 70px;
+  top: 70px;
+}
+.grid{
+  width: 480px;
+  height: 480px;
+  padding: 15px;
+  background: rgb(167, 167, 167);
+
+  position: absolute;
+  border-radius:15px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: space-between;
+}
+.grid-row{
+width:450px;
+display: flex;
+justify-content: space-between;
+}
+.grid-cell{
+  width: 105px;
+  height: 105px;
+  background:rgb(194, 190, 190);
+  border-radius: 5px;
+}
+.tile-container{
+  position: absolute;
+  top: 15px;
+  left: 15px;
+}
+.tile{
+  width: 105px;
+  height: 105px;
+  border-radius: 5px;
+}
+.tile-position-1-1{
+  position: absolute;
+  left:0;
+  top:0;
+}
+
+.tile-position-1-2{
+  position: absolute;
+  left:115px;
+  top:0;
+}
+
+.tile-position-1-3{
+  position: absolute;
+  left:230px;
+  top:0;
+}
+
+.tile-position-1-4{
+  position: absolute;
+  left:345px;
+  top:0;
+}
+.tile-position-2-1{
+  position: absolute;
+  left:0;
+  top:115px;
+}
+
+.tile-position-2-2{
+  position: absolute;
+  left:115px;
+  top:115px;
+}
+.tile-position-2-3{
+  position: absolute;
+  left:230px;
+  top:115px;
+}
+.tile-position-2-4{
+  position: absolute;
+  left:345px;
+  top:115px;
+}
+
+.tile-position-3-1{
+  position: absolute;
+  left:0;
+  top:230px;
+}
+
+.tile-position-3-2{
+  position: absolute;
+  left:115px;
+  top:230px;
+}
+.tile-position-3-3{
+  position: absolute;
+  left:230px;
+  top:230px;
+}
+.tile-position-3-4{
+  position: absolute;
+  left:345px;
+  top:230px;
+}
+
+.tile-position-4-1{
+  position: absolute;
+  left:0;
+  top:345px;
+}
+
+.tile-position-4-2{
+  position: absolute;
+  left:115px;
+  top:345px;
+}
+.tile-position-4-3{
+  position: absolute;
+  left:230px;
+  top:345px;
+}
+.tile-position-4-4{
+  position: absolute;
+  left:345px;
+  top:345px;
+}
