@@ -23,8 +23,8 @@ class Grid {
 
   availiableCells() {
     let cells = [];
-    this.forEachCell((x, y, tail) => {
-      if (!tail) {
+    this.forEachCell((x, y, tile) => {
+      if (!tile) {
         cells.push({ x: x, y: y })
       }
     })
@@ -57,7 +57,7 @@ class Grid {
 
 
   whatIsCellContent(cell) {
-    if (isWithinBoundary(cell)) {
+    if (this.isWithinBoundary(cell)) {
       return this.cells[cell.y][cell.x]
     } else {
       return null
@@ -65,10 +65,10 @@ class Grid {
   }
 
   isCellOccupied(cell) {
-    return !!whatIsCellContent(cell)
+    return !!this.whatIsCellContent(cell)
   }
 
   isCellAvailable(cell) {
-    return !isCellOccupied(cell)
+    return !this.isCellOccupied(cell)
   }
 }

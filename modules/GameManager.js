@@ -23,6 +23,16 @@ class GameManager {
     }
   }
 
+  //стираем информацию mergedFrom и сохраняем текущие координаты
+  prepareTiles() {
+    this.grid.forEachCell((x, y, tile) => {
+      if (tile) {
+        tile.mergedFrom = null;
+        tile.savePosition();
+      }
+    })
+  }
+
   addRandomTile() {
     if (this.grid.availiableCells) {
       let value = Math.random() > 0.9 ? 4 : 2;
@@ -35,13 +45,54 @@ class GameManager {
     this.actuator.actuate(this.grid)
   }
 
-  move(direction) {
-    console.log(direction);
+  moveTile(tile, cell) {
+    this.grid.cells[tile.y][tile.x] = null;
+    this.grid.cells[cell.y][cell.x] = tile;
+    tile.updatePosition(cell)
+  }
 
+  move(direction) {
     let vector = this.getVector(direction);
     let traversals = this.buildTraversals(vector)
-    console.log(traversals);
+    let moved = false;
 
+
+    this.prepareTiles();
+    let cell, tile;
+    traversals.y.forEach(y => {
+      traversals.x.forEach(x => {
+        cell = { x: x, y: y };
+        tile = this.grid.whatIsCellContent(cell);
+        if (tile) {
+          console.log(tile);
+
+          let positions = this.findFarthestPosition(cell, vector);
+          let next = this.grid.whatIsCellContent(positions.next)
+
+          if (next && next.value === tile.value && !next.mergedFrom) {
+            let merged = new Tile(positions.next, tile.value * 2);
+            merged.mergedFrom = [tile, next]
+
+            this.grid.insertTile(merged);
+            this.grid.deleteTile(tile)
+
+            tile.updatePosition(positions.next)
+          } else {
+            this.moveTile(tile, positions.farthest);
+          }
+
+          if (!this.positionsEqual(cell, tile)) {
+            moved = true
+          }
+        }
+      })
+    })
+    console.log(this.grid.cells);
+
+    if (moved) {
+      this.addRandomTile()
+    }
+    // this.actuate()
   }
 
   getVector(direction) {
@@ -49,7 +100,7 @@ class GameManager {
       0: { x: 0, y: -1 },//up
       1: { x: 1, y: 0 },//right
       2: { x: 0, y: 1 },//down
-      3: { x: -1, y: 1 }//left
+      3: { x: -1, y: 0 }//left
     }
     return map[direction]
   }
@@ -67,6 +118,27 @@ class GameManager {
     if (vector.x === 1) traversals.x = traversals.x.reverse();
     if (vector.y === 1) traversals.y = traversals.y.reverse();
     return traversals;
+  }
+
+
+  findFarthestPosition(cell, vector) {
+    let previous;
+    //пока не нашли препятствие, передвигаемся
+    do {
+      previous = cell;
+      cell = {
+        x: previous.x + vector.x,
+        y: previous.y + vector.y
+      }
+    } while (this.grid.isWithinBoundary(cell) && this.grid.isCellAvailable(cell))
+    return {
+      farthest: previous,
+      next: cell
+    }
+  }
+
+  positionsEqual(first, second) {
+    return first.x === second.x && first.y === second.y
   }
 
 }
