@@ -36,6 +36,16 @@ class HTMLActuator {
         classes[1] = this.positionClass({ x: tile.x, y: tile.y });
         this.applyClasses(element, classes);
       })
+    } else if (tile.mergedFrom) {
+      classes.push('tile-merged');
+      this.applyClasses(element, classes);
+
+      tile.mergedFrom.forEach((merged) => {
+        this.addTile(merged)
+      });
+    } else {
+      classes.push('tile-new');
+      this.applyClasses(element, classes);
     }
     this.tileContainer.appendChild(element)
 
