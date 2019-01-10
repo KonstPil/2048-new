@@ -5,7 +5,7 @@ class GameManager {
     this.startTiles = 1;
     this.size = 4;
     this.inputManager.on('move', this.move.bind(this));
-    this.inputManager.on('restart', this.move.bind(this));
+    this.inputManager.on('restart', this.restart.bind(this));
     this.setup();
   }
 
