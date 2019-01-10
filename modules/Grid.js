@@ -14,15 +14,15 @@ class Grid {
     }
   }
 
-  randomAvailiableCell() {
-    let cells = this.availiableCells();
+  randomAvailableCell() {
+    let cells = this.availableCells();
     if (cells.length) {
       return cells[Math.floor(Math.random() * cells.length)];
 
     }
   }
 
-  availiableCells() {
+  availableCells() {
     let cells = [];
     this.forEachCell((x, y, tile) => {
       if (!tile) {
@@ -32,8 +32,8 @@ class Grid {
     return cells;
   }
 
-  isCellsAvailiable() {
-    return !!this.availiableCells();
+  isCellsAvailable() {
+    return !!this.availableCells().length;
   }
 
   forEachCell(callback) {
@@ -57,9 +57,9 @@ class Grid {
   }
 
 
-  whatIsCellContent(cell) {
-    if (this.isWithinBoundary(cell)) {
-      return this.cells[cell.y][cell.x]
+  whatIsCellContent(position) {
+    if (this.isWithinBoundary(position)) {
+      return this.cells[position.y][position.x]
     } else {
       return null
     }

@@ -5,17 +5,146 @@
   margin: 0;
   padding: 0;
 }
-.playfield{
+
+.heading{
+  font-family: "Fredoka One", cursive;
+  width: 400px;
+  display: flex;
+  justify-content: space-between;
+  left: 100px;
+  top:20px;
   position: relative;
-  left: 70px;
-  top: 70px;
+  align-items: center;
 }
+
+.title {
+  font-size: 48px;
+  letter-spacing: -4px;
+}
+.title span:nth-child(1){
+  color: #00ff62;;
+}
+.title span:nth-child(2){
+  color: rgb(60, 142, 175);
+}
+.title span:nth-child(3){
+  color: #a60efd;;
+}
+.title span:nth-child(4){
+  color: #ad0051;
+}
+.score-container {
+  position: relative;
+  font-size: 25px;
+  width: 120px;
+  background: rgb(167, 167, 167);
+  padding-left: 10px; 
+  line-height: 47px;
+  font-weight: bold;
+  border-radius: 3px;
+  margin-top: 8px;
+}
+.score-container:before {
+  content: "Score:  ";
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+@keyframes move-up {
+  0% {
+    top: -10px;
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    top: -40px;
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+ .score-addition {
+  position: absolute;
+  left: 45px;
+  top:0px;
+  opacity: 0;
+  font-size: 25px;
+  font-weight: bold;
+  z-index: 100;
+  animation: move-up 400ms ease-in;
+}
+
+
+.playfield{
+  position: absolute;
+  left: 70px;
+  top: 90px;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    display: inline;
+  }
+
+  100% {
+    opacity: 1;
+    display: inline;
+  }
+}
+
+
+.game-message{
+  display: none;
+  position: absolute;
+  z-index: 50;
+  width: 480px;
+  height: 480px;
+  background: rgba(167, 167, 167,0.6);
+  text-align: center;
+  animation: fade-in 3000ms ease;
+}
+
+.game-message p {
+  font-size: 60px;
+  font-weight: bold;
+  height: 60px;
+  line-height: 60px;
+  margin-top: 222px;
+  font-family: "Fredoka One", cursive;
+}
+
+.lower {
+
+  display: block;
+  margin-top: 15px;
+}
+.game-message a {
+  display: inline-block;
+  background: #e5fd5efb;
+  border-radius: 3px;
+  padding: 0 20px;
+  text-decoration: none;
+  height: 40px;
+  line-height: 42px;
+  margin-left: 9px;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  font-family: "Fredoka One", cursive;
+}
+
+.game-won,.game-over {
+  display: block;
+}
+
+
 .grid{
   width: 480px;
   height: 480px;
   padding: 15px;
   background: rgb(167, 167, 167);
-
   position: absolute;
   border-radius:15px;
   display: flex;
@@ -262,33 +391,5 @@ justify-content: space-between;
   z-index: 20;
   animation: pop 400ms ease;
 }
-@keyframes move-up {
-  0% {
-    top: -10px;
-    opacity: 1;
-    transform: scale(1);
-  }
 
-  100% {
-    top: -30px;
-    opacity: 0;
-    transform: scale(2);
-  }
-}
-.move-up {
-  animation: move-up 400ms ease;
-}
-/* @keyframes fade-in {
-  0% {
-    opacity: 0;
-    display: inline;
-  }
 
-  100% {
-    opacity: 1;
-    display: inline;
-  }
-}
-.fade-in {
-  animation: fade-in 3000ms ease;
-} */

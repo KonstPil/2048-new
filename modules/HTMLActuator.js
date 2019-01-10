@@ -1,11 +1,15 @@
 class HTMLActuator {
   constructor() {
     this.tileContainer = document.querySelector('.tile-container');
+    this.scoreContainer = document.querySelector('.score-container');
+    this.messageContainer = document.querySelector('.game-message');
+
+    this.score = 0;
   }
 
-  actuate(grid) {
+  actuate(grid, data) {
     window.requestAnimationFrame(() => {
-      this.clearTileContainer();//очищаем html grid
+      this.clearContainer(this.tileContainer);//очищаем html grid
 
       //перерисовываем 
       grid.cells.forEach(row => {
@@ -15,13 +19,18 @@ class HTMLActuator {
           }
         })
       })
+
+      this.updateScore(data.score);
+
+      if (data.over) this.message(false)//выйгрыш
+      if (data.won) this.message(true)//пройгрыш
     })
   }
 
 
-  clearTileContainer() {
-    while (this.tileContainer.firstChild) {
-      this.tileContainer.removeChild(this.tileContainer.firstChild)
+  clearContainer(container) {
+    while (container.firstChild) {
+      container.removeChild(container.firstChild)
     }
   }
 
@@ -62,5 +71,36 @@ class HTMLActuator {
   positionClass(position) {
     let cssPosition = this.normalizePosition(position);
     return `tile-position-${cssPosition.y}-${cssPosition.x}`
+  }
+
+  restart() {
+    this.clearMessage();
+  }
+
+  updateScore(score) {
+    this.clearContainer(this.scoreContainer);
+
+    let difference = score - this.score;
+    this.score = score;
+
+    this.scoreContainer.textContent = this.score;
+
+    if (difference > 0) {
+      let addition = document.createElement('div');
+      addition.classList.add('score-addition');
+      addition.innerHTML = `+${difference}`;
+      this.scoreContainer.appendChild(addition);
+    }
+  }
+
+  message(won) {
+    let type = won ? 'game-won' : 'game-over';
+    let message = won ? 'You win!' : 'Game over!';
+    this.messageContainer.classList.add(type);
+    this.messageContainer.querySelector('p').innerHTML = message;
+  }
+
+  clearMessage() {
+    this.messageContainer.classList.remove('game-over', 'game-won')
   }
 }

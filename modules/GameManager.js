@@ -4,13 +4,23 @@ class GameManager {
     this.actuator = new Actuator;
     this.startTiles = 1;
     this.size = 4;
+    this.inputManager.on('move', this.move.bind(this));
+    this.inputManager.on('restart', this.move.bind(this));
     this.setup();
-    this.inputManager.on('move', this.move.bind(this))
   }
+
+  restart() {
+    this.actuator.restart();
+    this.setup();
+  }
+
 
   setup() {
     this.grid = new Grid(this.size)
 
+    this.score = 0;
+    this.over = false;
+    this.won = false;
 
     this.addStartTiles();
     this.actuate();
@@ -34,17 +44,15 @@ class GameManager {
   }
 
   addRandomTile() {
-    if (this.grid.isCellsAvailiable()) {
+    if (this.grid.isCellsAvailable()) {
       let value = Math.random() > 0.9 ? 4 : 2;
-      let tile = new Tile(this.grid.randomAvailiableCell(), value);
+      let tile = new Tile(this.grid.randomAvailableCell(), value);
       this.grid.insertTile(tile);
-      console.log(tile.x, tile.y, tile.value);
-
     }
   }
 
   actuate() {
-    this.actuator.actuate(this.grid)
+    this.actuator.actuate(this.grid, { score: this.score, over: this.over, won: this.won })
   }
 
   moveTile(tile, cell) {
@@ -54,6 +62,8 @@ class GameManager {
   }
 
   move(direction) {
+    if (this.over || this.won) return
+
     let vector = this.getVector(direction);
     let traversals = this.buildTraversals(vector)
     let moved = false;
@@ -72,10 +82,13 @@ class GameManager {
           if (next && next.value === tile.value && !next.mergedFrom) {
             let merged = new Tile(positions.next, tile.value * 2);
             merged.mergedFrom = [tile, next]
-            console.log(merged);
             this.grid.insertTile(merged);
             this.grid.deleteTile(tile);
             tile.updatePosition(positions.next);
+
+            this.score += merged.value;
+
+            if (merged.value === 2048) this.won = true;
           } else {
             this.moveTile(tile, positions.farthest);
           }
@@ -88,7 +101,9 @@ class GameManager {
     if (moved) {
       this.addRandomTile();
     }
-    console.log(this.grid.cells);
+    if (!this.movesAvailable()) {
+      this.over = true;
+    }
 
     this.actuate()
   }
@@ -139,4 +154,28 @@ class GameManager {
     return first.x === second.x && first.y === second.y
   }
 
+  movesAvailable() {
+    return this.grid.isCellsAvailable() || this.tileMatchesAvailable();
+  }
+
+  tileMatchesAvailable() {
+    let tile;
+    for (let y = 0; y < this.size; y++) {
+      for (let x = 0; x < this.size; x++) {
+        tile = this.grid.whatIsCellContent({ x: x, y: y });
+        if (tile) {
+          for (let direction = 0; direction < 4; direction++) {
+            let vector = this.getVector(direction);
+            let cell = { x: x + vector.x, y: y + vector.y };
+
+            let other = this.grid.whatIsCellContent(cell);
+            if (other && other.value === tile.value) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false
+  }
 }
