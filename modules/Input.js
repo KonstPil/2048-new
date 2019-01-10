@@ -13,6 +13,22 @@ class InputManager {
   listen() {
     let mouseCoord = {};
 
+
+
+    //анимация в процессе или нет, transition не проверяем т.к он проходит быстрее чем анимация
+    let animationEnd = true;
+    document.addEventListener('animationstart', function () {
+      animationEnd = false;
+    })
+    document.addEventListener('animationend', function () {
+      animationEnd = true;
+    })
+
+
+
+
+
+    //находим координаты 
     document.addEventListener('mousedown', (e) => {
       e.preventDefault();
       if (e.which === 1) {
@@ -30,7 +46,7 @@ class InputManager {
       }
 
       let whichDirection = this.findDirection(mouseCoord);
-      if (whichDirection !== undefined) {
+      if (whichDirection !== undefined && animationEnd) {
         this.start('move', whichDirection);
       }
     });

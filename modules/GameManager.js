@@ -63,7 +63,6 @@ class GameManager {
 
   move(direction) {
     if (this.over || this.won) return
-
     let vector = this.getVector(direction);
     let traversals = this.buildTraversals(vector)
     let moved = false;
