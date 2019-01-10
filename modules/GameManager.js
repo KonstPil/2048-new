@@ -34,10 +34,12 @@ class GameManager {
   }
 
   addRandomTile() {
-    if (this.grid.availiableCells) {
+    if (this.grid.isCellsAvailiable()) {
       let value = Math.random() > 0.9 ? 4 : 2;
       let tile = new Tile(this.grid.randomAvailiableCell(), value);
       this.grid.insertTile(tile);
+      console.log(tile.x, tile.y, tile.value);
+
     }
   }
 
@@ -64,35 +66,31 @@ class GameManager {
         cell = { x: x, y: y };
         tile = this.grid.whatIsCellContent(cell);
         if (tile) {
-          console.log(tile);
-
           let positions = this.findFarthestPosition(cell, vector);
           let next = this.grid.whatIsCellContent(positions.next)
 
           if (next && next.value === tile.value && !next.mergedFrom) {
             let merged = new Tile(positions.next, tile.value * 2);
             merged.mergedFrom = [tile, next]
-
+            console.log(merged);
             this.grid.insertTile(merged);
-            this.grid.deleteTile(tile)
-
-            tile.updatePosition(positions.next)
+            this.grid.deleteTile(tile);
+            tile.updatePosition(positions.next);
           } else {
             this.moveTile(tile, positions.farthest);
           }
-
           if (!this.positionsEqual(cell, tile)) {
-            moved = true
+            moved = true;
           }
         }
       })
     })
+    if (moved) {
+      this.addRandomTile();
+    }
     console.log(this.grid.cells);
 
-    if (moved) {
-      this.addRandomTile()
-    }
-    // this.actuate()
+    this.actuate()
   }
 
   getVector(direction) {

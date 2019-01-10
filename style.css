@@ -47,6 +47,7 @@ justify-content: space-between;
   color: black;
   text-align: center;
   font: 48px/104px "Fredoka One", cursive;
+
 }
 .tile-position-1-1{
   position: absolute;
@@ -140,7 +141,6 @@ justify-content: space-between;
 .t2 {
   z-index: 1;
   background: #e5fd5efb;
-  transition: 0.3s;
 }
 .t2:after {
   z-index: 1;

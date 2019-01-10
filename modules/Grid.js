@@ -17,7 +17,8 @@ class Grid {
   randomAvailiableCell() {
     let cells = this.availiableCells();
     if (cells.length) {
-      return cells[Math.floor(Math.random() * cells.length)]
+      return cells[Math.floor(Math.random() * cells.length)];
+
     }
   }
 
@@ -38,7 +39,7 @@ class Grid {
   forEachCell(callback) {
     for (let y = 0; y < this.size; y++) {
       for (let x = 0; x < this.size; x++) {
-        callback(x, y, this.cells[x][y])
+        callback(x, y, this.cells[y][x])
       }
     }
   }

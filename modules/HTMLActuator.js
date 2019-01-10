@@ -27,15 +27,23 @@ class HTMLActuator {
 
   addTile(tile) {
     let element = document.createElement('div');
-    let position = { x: tile.x, y: tile.y };
+    let position = tile.previousPosition || { x: tile.x, y: tile.y };
     let positionClass = this.positionClass(position);
-    // let classes = ['tile', positionClass, `t${tile.value}`];
-    element.className = `tile ${positionClass} t${tile.value}`
+    let classes = ['tile', positionClass, `t${tile.value}`];
+    this.applyClasses(element, classes);
+    if (tile.previousPosition) {
+      window.requestAnimationFrame(() => {
+        classes[1] = this.positionClass({ x: tile.x, y: tile.y });
+        this.applyClasses(element, classes);
+      })
+    }
     this.tileContainer.appendChild(element)
 
   }
 
-
+  applyClasses(element, classes) {
+    element.className = classes.join(' ');
+  }
 
   normalizePosition(position) {
     return { x: position.x + 1, y: position.y + 1 }
