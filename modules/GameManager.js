@@ -1,24 +1,43 @@
 import Tile from './Tile.js';
 import Grid from './Grid.js';
 
+/**
+ * описывает действия на игровом поле
+ * @module GameManager
+ *
+ */
 
 class GameManager {
+  /**
+   * действия на игровом оле
+   * @param {Object} inputManager  вводимые данные- события мыши и т.д(для управления)
+   * @param {Object} actuator  отрисовка html
+   * @param {Number} startTiles  кол-во начальных клеток
+   * @param {Number} size  размер квадрата представляющий игровое поле
+   * @param {Function} setup  начальные действия для старта игры
+   */
   constructor(Input, Actuator) {
     this.inputManager = new Input;
     this.actuator = new Actuator;
     this.startTiles = 1;
     this.size = 4;
-    this.inputManager.on('move', this.move.bind(this));
-    this.inputManager.on('restart', this.restart.bind(this));
+    this.inputManager.on('move', this.move.bind(this));//устанавливаем callback для  inputManager, на действие 'move'
+    this.inputManager.on('restart', this.restart.bind(this));//устанавливаем callback для  inputManager, на действие 'restart'
     this.setup();
   }
 
+  /**
+* делает рестарт игры после пройгрыша или выгрыша
+*/
   restart() {
     this.actuator.restart();
     this.setup();
   }
 
 
+  /**
+ * подготовка перед началом игры
+*/
   setup() {
     this.grid = new Grid(this.size)
 
@@ -31,13 +50,19 @@ class GameManager {
 
   }
 
+  /**
+* добавляет стартовые tile в зависимости от их количества (this.startTiles)
+*/
   addStartTiles() {
     for (let i = 0; i < this.startTiles; i++) {
       this.addRandomTile();
     }
   }
 
-  //стираем информацию mergedFrom и сохраняем текущие координаты
+
+  /**
+* подготавливает ячейку к следующему ходу
+*/
   prepareTiles() {
     this.grid.forEachCell((x, y, tile) => {
       if (tile) {
@@ -47,6 +72,10 @@ class GameManager {
     })
   }
 
+
+  /**
+* добавляем tile в свободное место
+*/
   addRandomTile() {
     if (this.grid.isCellsAvailable()) {
       let value = Math.random() > 0.9 ? 4 : 2;
@@ -55,16 +84,26 @@ class GameManager {
     }
   }
 
+  /**
+* передаем информацию о состоянии игры в this.actuator
+*/
   actuate() {
     this.actuator.actuate(this.grid, { score: this.score, over: this.over, won: this.won })
   }
 
+  /**
+* переставляем tile в необходимую ячейку в массиве который представляет игровое поле
+*/
   moveTile(tile, cell) {
     this.grid.cells[tile.y][tile.x] = null;
     this.grid.cells[cell.y][cell.x] = tile;
     tile.updatePosition(cell)
   }
 
+  /**
+* отвечает за передвижение внутри массива представляющего игровое поле а  так же слияние и состояние выгрыша и пройгрыша
+* @param {Number} direction число которое представлет направление движения см.Input.js
+*/
   move(direction) {
     if (this.over || this.won) return
     let vector = this.getVector(direction);
@@ -111,6 +150,11 @@ class GameManager {
     this.actuate()
   }
 
+  /**
+* получаем вектор движения
+* @param {Number} direction число которое представлет направление движения см.Input.js
+* @return {Object} какие кординаты будут меняться при соответствующих направления движения
+*/
   getVector(direction) {
     let map = {
       0: { x: 0, y: -1 },//up
@@ -121,7 +165,11 @@ class GameManager {
     return map[direction]
   }
 
-  //в каком порядке перебираем клетки
+  /**
+* в каком порядке перебираем клетки
+* @param {Object} vector какие кординаты будут меняться при соответствующих направления движения
+* @return {Object} в каком порядке делать перебор
+*/
   buildTraversals(vector) {
     let traversals = { x: [], y: [] };
 
@@ -137,6 +185,12 @@ class GameManager {
   }
 
 
+  /**
+* находим самую дальнюю доступную для передвижения точку
+* @param {Object} cell текущие координаты клетки 
+* @param {Object} vector какие кординаты будут меняться при соответствующих направления движения
+* @return {Object} самое дальнне положение без препятствий и следующее за ним
+*/
   findFarthestPosition(cell, vector) {
     let previous;
     //пока не нашли препятствие, передвигаемся
@@ -153,14 +207,25 @@ class GameManager {
     }
   }
 
+  /**
+* проверяем равны ли два позиции 
+*/
   positionsEqual(first, second) {
     return first.x === second.x && first.y === second.y
   }
 
+  /**
+* остались ещё ходы или нет, т.е когда есть свободные клетки или можно выполнить слияние
+* @return {Boolean} 
+*/
   movesAvailable() {
     return this.grid.isCellsAvailable() || this.tileMatchesAvailable();
   }
 
+  /**
+* можно выполнить слияние?
+* @return {Boolean} 
+*/
   tileMatchesAvailable() {
     let tile;
     for (let y = 0; y < this.size; y++) {

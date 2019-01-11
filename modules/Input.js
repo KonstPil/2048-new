@@ -1,20 +1,34 @@
+/**
+ * отвечает за ввод и прослушивание событий
+ * @module InputManager
+ *
+ */
+
 class InputManager {
+  /**
+   * отвечает за управление
+   * @param {Object} events  содержит события и callback для них
+   * @param {Function} listen после создания поля сразу устанавливает события которые мы прослушиваем
+   */
   constructor() {
     this.events = {};
     this.listen();
   }
 
-  //устанавливаем callback и ждём нажатия кнопки чтобы запустить
+
+  /**
+  * устанавливаем события и для каждого соответствующий callback
+  * @param {String} event событие 
+  * @param {Function} callback соответствующий событие callback
+ */
   on(event, callback) {
     this.events[event] = callback;
   }
 
-  //какая кнопка нажата
+  /**
+  * устанавливаем прослушивание основных событий и запуск соответствующие функции
+ */
   listen() {
-    let mouseCoord = {};
-
-
-
     //анимация в процессе или нет, transition не проверяем т.к он проходит быстрее чем анимация
     let animationEnd = true;
     document.addEventListener('animationstart', function () {
@@ -24,11 +38,8 @@ class InputManager {
       animationEnd = true;
     })
 
-
-
-
-
-    //находим координаты 
+    let mouseCoord = {};
+    //находим координаты при нажатии
     document.addEventListener('mousedown', (e) => {
       e.preventDefault();
       if (e.which === 1) {
@@ -36,15 +47,13 @@ class InputManager {
         mouseCoord.yDown = e.clientY;
       }
     });
-
-
+    //находим координаты при отпускани кнопки
     document.addEventListener('mouseup', (e) => {
       e.preventDefault();
       if (e.which === 1) {
         mouseCoord.xUp = e.clientX;
         mouseCoord.yUp = e.clientY;
       }
-
       let whichDirection = this.findDirection(mouseCoord);
       if (whichDirection !== undefined && animationEnd) {
         this.start('move', whichDirection);
@@ -52,8 +61,7 @@ class InputManager {
     });
 
 
-
-
+    //нажитие на кнопку 'переиграть'
     let retry = document.querySelector('.retry-button');
     retry.addEventListener('click', this.restart.bind(this))
   }
@@ -63,6 +71,7 @@ class InputManager {
 
   /**
     *обрабатываем полученный координаты нажатий мыши, и передаём нужный массив в метод действия 
+    * @param {Object} coordDownAndUp содержит координаты нажатия и отпускания мыши 
   */
   findDirection(coordDownAndUp) {
     let xVector = coordDownAndUp.xDown > coordDownAndUp.xUp;
@@ -83,12 +92,17 @@ class InputManager {
 
 
 
-  //запускаем callback - функцию move, которую задаем в gameManager и передаем значение нажатой клавиши
+  /**
+    *запускаем callback - функцию move, которую задаем в gameManager и передаем значение нажатой клавиши
+  */
   start(event, data) {
     let callback = this.events[event];
     callback(data);
   }
 
+  /**
+    *запускаем callback - функцию restart, которую задаем в gameManager
+  */
   restart(event) {
     event.preventDefault();
     let callback = this.events['restart'];
