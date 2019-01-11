@@ -16,3 +16,5 @@ class Tile {
     this.y = position.y;
   }
 }
+
+export default Tile;

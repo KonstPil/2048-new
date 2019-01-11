@@ -171,7 +171,7 @@ justify-content: space-between;
   width: 105px;
   height: 105px;
   border-radius: 5px;
-  transition: 100ms ease-in-out;
+  transition: 150ms ease-in-out;
   transition-property: top,left;
   color: black;
   text-align: center;

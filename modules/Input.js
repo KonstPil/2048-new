@@ -95,3 +95,5 @@ class InputManager {
     callback();
   }
 }
+
+export default InputManager;

@@ -73,3 +73,5 @@ class Grid {
     return !this.isCellOccupied(cell)
   }
 }
+
+export default Grid;

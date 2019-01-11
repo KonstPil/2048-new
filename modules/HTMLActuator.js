@@ -104,3 +104,5 @@ class HTMLActuator {
     this.messageContainer.classList.remove('game-over', 'game-won')
   }
 }
+
+export default HTMLActuator;

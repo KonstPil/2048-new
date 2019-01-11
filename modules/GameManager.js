@@ -1,3 +1,7 @@
+import Tile from './Tile.js';
+import Grid from './Grid.js';
+
+
 class GameManager {
   constructor(Input, Actuator) {
     this.inputManager = new Input;
@@ -178,3 +182,5 @@ class GameManager {
     return false
   }
 }
+
+export default GameManager;
