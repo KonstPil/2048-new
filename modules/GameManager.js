@@ -1,5 +1,6 @@
 import Tile from './Tile.js';
 import Grid from './Grid.js';
+import Position from './Position.js';
 
 /**
  * описывает действия на игровом поле
@@ -10,6 +11,9 @@ const maxValueInTheGame = 2048;
 const minValueInTheGame = 2;
 const ratioForMergingValues = 2;
 const oddsForAppearanceTileWithMinValue = 0.9;
+const startScore = 0;
+const startTilesOnTheField = 1;
+const sizeColAndRowInGameGrid = 4;
 
 
 class GameManager {
@@ -24,8 +28,8 @@ class GameManager {
   constructor(Input, Actuator) {
     this.inputManager = new Input;
     this.actuator = new Actuator;
-    this.startTiles = 1;
-    this.size = 4;
+    this.startTiles = startTilesOnTheField;
+    this.size = sizeColAndRowInGameGrid;
     this.inputManager.on('move', this.move.bind(this));//устанавливаем callback для  inputManager, на действие 'move'
     this.inputManager.on('restart', this.restart.bind(this));//устанавливаем callback для  inputManager, на действие 'restart'
     this.setup();
@@ -46,7 +50,7 @@ class GameManager {
   setup() {
     this.grid = new Grid(this.size)
 
-    this.score = 0;
+    this.score = startScore;
     this.over = false;
     this.won = false;
 
@@ -114,6 +118,7 @@ class GameManager {
     let traversals = this.buildTraversals(vector)
     let moved = false;
 
+    console.log(123);
 
     this.prepareTiles();
     let cell, tile;
@@ -124,7 +129,6 @@ class GameManager {
         if (tile) {
           let positions = this.findFarthestPosition(cell, vector);
           let next = this.grid.whatIsCellContent(positions.next)
-
           if (next && next.value === tile.value && !next.mergedFrom) {
             let merged = new Tile(positions.next, tile.value * ratioForMergingValues);
             merged.mergedFrom = [tile, next]
@@ -138,7 +142,9 @@ class GameManager {
           } else {
             this.moveTile(tile, positions.farthest);
           }
-          if (!this.positionsEqual(cell, tile)) {
+
+          let cellPosition = new Position(cell);
+          if (!cellPosition.isEqualTo(tile)) {
             moved = true;
           }
         }
@@ -184,26 +190,21 @@ class GameManager {
 */
   findFarthestPosition(cell, vector) {
     let previous;
+
     //пока не нашли препятствие, передвигаемся
     do {
       previous = cell;
-      cell = {
-        x: previous.x + vector.x,
-        y: previous.y + vector.y
-      }
+      let cellPosition = new Position(cell);
+      cell = cellPosition.addCoord(vector);
+
     } while (this.grid.isWithinBoundary(cell) && this.grid.isCellAvailable(cell))
+
     return {
       farthest: previous,
       next: cell
     }
   }
 
-  /**
-* проверяем равны ли два позиции 
-*/
-  positionsEqual(first, second) {
-    return first.x === second.x && first.y === second.y
-  }
 
   /**
 * остались ещё ходы или нет, т.е когда есть свободные клетки или можно выполнить слияние
@@ -221,13 +222,14 @@ class GameManager {
     let tile;
     for (let y = 0; y < this.size; y++) {
       for (let x = 0; x < this.size; x++) {
-        tile = this.grid.whatIsCellContent({ x: x, y: y });
+        cellPosition = new Position({ x: x, y: y });
+        tile = this.grid.whatIsCellContent(cellPosition);
         if (tile) {
           let directions = this.inputManager.directionVectors;
           for (let i = 0; i < directions.length; i++) {
             let vector = directions[i];
-            let cell = { x: x + vector.x, y: y + vector.y };
-            let other = this.grid.whatIsCellContent(cell);
+            let cellPositionsForCheck = cellPosition.addCoord(vector)
+            let other = this.grid.whatIsCellContent(cellPositionsForCheck);
             if (other && other.value === tile.value) {
               return true;
             }
