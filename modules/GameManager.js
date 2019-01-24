@@ -30,7 +30,7 @@ class GameManager {
     this.actuator = new Actuator;
     this.startTiles = startTilesOnTheField;
     this.size = sizeColAndRowInGameGrid;
-    this.inputManager.on('move', this.move.bind(this));//устанавливаем callback для  inputManager, на действие 'move'
+    this.inputManager.on('gameLogic', this.gameLogic.bind(this));//устанавливаем callback для  inputManager, на действие 'move'
     this.inputManager.on('restart', this.restart.bind(this));//устанавливаем callback для  inputManager, на действие 'restart'
     this.setup();
   }
@@ -113,13 +113,25 @@ class GameManager {
 * отвечает за передвижение внутри массива представляющего игровое поле а  так же слияние и состояние выгрыша и пройгрыша
 * @param {Number} direction число которое представлет направление движения см.Input.js
 */
-  move(vector) {
+  gameLogic(vector) {
     if (this.over || this.won) return
+    this.move(vector);
+
+    if (this.wasMoved) {
+      this.addRandomTile();
+    }
+
+    if (!this.movesAvailable()) {
+      this.over = true;
+    }
+
+    this.actuate()
+  }
+
+
+  move(vector) {
     let traversals = this.buildTraversals(vector)
-    let moved = false;
-
-    console.log(123);
-
+    this.wasMoved = false;
     this.prepareTiles();
     let cell, tile;
     traversals.y.forEach(y => {
@@ -145,20 +157,16 @@ class GameManager {
 
           let cellPosition = new Position(cell);
           if (!cellPosition.isEqualTo(tile)) {
-            moved = true;
+            this.wasMoved = true;
           }
         }
       })
     })
-    if (moved) {
-      this.addRandomTile();
-    }
-    if (!this.movesAvailable()) {
-      this.over = true;
-    }
-
-    this.actuate()
   }
+
+
+
+
 
   /**
 * в каком порядке перебираем клетки
@@ -222,7 +230,7 @@ class GameManager {
     let tile;
     for (let y = 0; y < this.size; y++) {
       for (let x = 0; x < this.size; x++) {
-        cellPosition = new Position({ x: x, y: y });
+        let cellPosition = new Position({ x: x, y: y });
         tile = this.grid.whatIsCellContent(cellPosition);
         if (tile) {
           let directions = this.inputManager.directionVectors;

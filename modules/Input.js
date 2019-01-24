@@ -67,7 +67,7 @@ class InputManager {
       }
       let whichDirection = this.findDirectionVector(mouseCoord);
       if (whichDirection !== undefined && animationEnd) {
-        this.start('move', whichDirection);
+        this.start('gameLogic', whichDirection);
       }
       mouseCoord = {};
     });
