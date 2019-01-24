@@ -32,31 +32,44 @@
  *
  */
 
+/** @const {Object} directionVector отражает векторы направления с данными(какие координаты будут меняться при том или ином направлении, а так же отражает наличие положительных значений, т.е движется ли вектор вниз или вправо)*/
+
+const directionVector = {
+  right: { x: 1, y: 0, hasPositiveCoord: true },
+  left: { x: -1, y: 0, hasPositiveCoord: false },
+  up: { x: 0, y: -1, hasPositiveCoord: false },
+  down: { x: 0, y: 1, hasPositiveCoord: true }
+}
+
+
+
 class InputManager {
   /**
    * отвечает за управление
    * @param {Object} events  содержит события и callback для них
-   * @param {Function} listen после создания поля сразу устанавливает события которые мы прослушиваем
+   * @param {Function} init после создания поля сразу устанавливает события которые мы прослушиваем
    */
   constructor() {
     this.events = {};
-    this.listen();
+    this.directionVectors = [];
+    this.init();
   }
 
 
   /**
   * устанавливаем события и для каждого соответствующий callback
-  * @param {String} event событие 
-  * @param {Function} callback соответствующий событие callback
+  * @param {String} event название события 
+  * @param {Function} callback соответствующий событию callback
  */
   on(event, callback) {
     this.events[event] = callback;
   }
 
   /**
-  * устанавливаем прослушивание основных событий и запуск соответствующие функции
+  * устанавливаем прослушивание основных событий и запуск соответствующие функций при их, а так же создание массива со всеми направленияеми
  */
-  listen() {
+  init() {
+    this.createArrayForDirections()
     //анимация в процессе или нет, transition не проверяем т.к он проходит быстрее чем анимация
     let animationEnd = true;
     document.addEventListener('animationstart', function () {
@@ -75,6 +88,7 @@ class InputManager {
         mouseCoord.yDown = e.clientY;
       }
     });
+
     //находим координаты при отпускани кнопки
     document.addEventListener('mouseup', (e) => {
       e.preventDefault();
@@ -82,10 +96,11 @@ class InputManager {
         mouseCoord.xUp = e.clientX;
         mouseCoord.yUp = e.clientY;
       }
-      let whichDirection = this.findDirection(mouseCoord);
+      let whichDirection = this.findDirectionVector(mouseCoord);
       if (whichDirection !== undefined &amp;&amp; animationEnd) {
-        this.start('move', whichDirection);
+        this.start('gameLogic', whichDirection);
       }
+      mouseCoord = {};
     });
 
 
@@ -98,30 +113,40 @@ class InputManager {
 
 
   /**
-    *обрабатываем полученный координаты нажатий мыши, и передаём нужный массив в метод действия 
+    * находим вектор направления движения 
     * @param {Object} coordDownAndUp содержит координаты нажатия и отпускания мыши 
+    * @return {Object} отражает какие координаты будут меняться при том или ином направлении, а так же отражает наличие положительных значений, т.е движется ли вектор вниз или вправо
   */
-  findDirection(coordDownAndUp) {
+  findDirectionVector(coordDownAndUp) {
     let xVector = coordDownAndUp.xDown > coordDownAndUp.xUp;
     let yVector = coordDownAndUp.yDown > coordDownAndUp.yUp;
     let xDiff = Math.abs(coordDownAndUp.xDown - coordDownAndUp.xUp);
     let yDiff = Math.abs(coordDownAndUp.yDown - coordDownAndUp.yUp);
-    if (!xVector &amp;&amp; xDiff >= yDiff) {
-      return 1//right
+    if (!xVector &amp;&amp; xDiff > yDiff) {
+      return directionVector.right
     } else if (xVector &amp;&amp; xDiff > yDiff) {
-      return 3//left
-    } else if (!yVector &amp;&amp; yDiff >= xDiff) {
-      return 2//down
+      return directionVector.left
+    } else if (!yVector &amp;&amp; yDiff > xDiff) {
+      return directionVector.down
     } else if (yVector &amp;&amp; yDiff > xDiff) {
-      return 0//up
+      return directionVector.up
     }
   }
 
 
-
+  /**
+    * создаём массив из существующих векторов движения
+  */
+  createArrayForDirections() {
+    for (let i in directionVector) {
+      this.directionVectors.push(directionVector[i])
+    }
+  }
 
   /**
-    *запускаем callback - функцию move, которую задаем в gameManager и передаем значение нажатой клавиши
+    *запускаем callback  - 'gameLogic', которую задаем в gameManager
+    * @param {String} event название события 
+    * @param {Object} data аргумент для cb
   */
   start(event, data) {
     let callback = this.events[event];
@@ -130,6 +155,7 @@ class InputManager {
 
   /**
     *запускаем callback - функцию restart, которую задаем в gameManager
+    * @param {Object} event событие
   */
   restart(event) {
     event.preventDefault();
@@ -148,13 +174,13 @@ export default InputManager;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-GameManager.html">GameManager</a></li><li><a href="module-Grid.html">Grid</a></li><li><a href="module-HTMLActuator.html">HTMLActuator</a></li><li><a href="module-InputManager.html">InputManager</a></li><li><a href="module-Tile.html">Tile</a></li></ul><h3>Classes</h3><ul><li><a href="module-GameManager-GameManager.html">GameManager</a></li><li><a href="module-Grid-Grid.html">Grid</a></li><li><a href="module-HTMLActuator-HTMLActuator.html">HTMLActuator</a></li><li><a href="module-InputManager-InputManager.html">InputManager</a></li><li><a href="module-Tile-Tile.html">Tile</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-GameManager.html">GameManager</a></li><li><a href="module-Grid.html">Grid</a></li><li><a href="module-HTMLActuator.html">HTMLActuator</a></li><li><a href="module-InputManager.html">InputManager</a></li><li><a href="module-Position.html">Position</a></li><li><a href="module-Tile.html">Tile</a></li></ul><h3>Classes</h3><ul><li><a href="module-GameManager-GameManager.html">GameManager</a></li><li><a href="module-Grid-Grid.html">Grid</a></li><li><a href="module-HTMLActuator-HTMLActuator.html">HTMLActuator</a></li><li><a href="module-InputManager-InputManager.html">InputManager</a></li><li><a href="module-Position-Position.html">Position</a></li><li><a href="module-Tile-Tile.html">Tile</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jan 11 2019 13:14:48 GMT+0500 (GMT+05:00)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Jan 24 2019 15:42:31 GMT+0500 (GMT+05:00)
 </footer>
 
 <script> prettyPrint(); </script>

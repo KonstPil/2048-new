@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Tile</title>
+    <title>JSDoc: Class: Position</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Tile</h1>
+    <h1 class="page-title">Class: Position</h1>
 
     
 
@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-Tile.html">Tile</a>~</span>Tile<span class="signature">(x, y, value, previousPosition, mergedFrom)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-Position.html">Position</a>~</span>Position<span class="signature">(x, y)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -42,7 +42,7 @@
     
 
     
-    <h4 class="name" id="Tile"><span class="type-signature"></span>new Tile<span class="signature">(x, y, value, previousPosition, mergedFrom)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Position"><span class="type-signature"></span>new Position<span class="signature">(x, y)</span><span class="type-signature"></span></h4>
     
 
     
@@ -50,7 +50,7 @@
 
 
 <div class="description">
-    создание ячейки
+    координаты
 </div>
 
 
@@ -102,7 +102,7 @@
 
             
 
-            <td class="description last">координата x ячейки(расположение по горизонтали)</td>
+            <td class="description last">значение координаты х</td>
         </tr>
 
     
@@ -125,76 +125,7 @@
 
             
 
-            <td class="description last">координата y ячейки(расположение по вертикали)</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>value</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">значение ячейки</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>previousPosition</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">объект с предыддущими координатами расположения ячейки если такие есть</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>mergedFrom</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">массив с данными о 2 ячейках, которые слились, если такое слияние было</td>
+            <td class="description last">значение координаты y</td>
         </tr>
 
     
@@ -235,7 +166,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Tile.js.html">Tile.js</a>, <a href="Tile.js.html#line16">line 16</a>
+        <a href="Position.js.html">Position.js</a>, <a href="Position.js.html#line14">line 14</a>
     </li></ul></dd>
     
 
@@ -289,7 +220,7 @@
     
 
     
-    <h4 class="name" id="savePosition"><span class="type-signature"></span>savePosition<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="addCoord"><span class="type-signature"></span>addCoord<span class="signature">(coordForAdd)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -297,93 +228,7 @@
 
 
 <div class="description">
-    сохраняет текущее значение положения в previousPosition, перед сменой позиции
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Tile.js.html">Tile.js</a>, <a href="Tile.js.html#line27">line 27</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="updatePosition"><span class="type-signature"></span>updatePosition<span class="signature">(position)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    обновляет x и y при смене на указанное место(position)
+    добавляем координаты coordForAdd к текущим
 </div>
 
 
@@ -419,7 +264,7 @@
 
         <tr>
             
-                <td class="name"><code>position</code></td>
+                <td class="name"><code>coordForAdd</code></td>
             
 
             <td class="type">
@@ -435,7 +280,7 @@
 
             
 
-            <td class="description last">объект с координатами</td>
+            <td class="description last">координаты которые необходимо добавить</td>
         </tr>
 
     
@@ -476,7 +321,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Tile.js.html">Tile.js</a>, <a href="Tile.js.html#line35">line 35</a>
+        <a href="Position.js.html">Position.js</a>, <a href="Position.js.html#line25">line 25</a>
     </li></ul></dd>
     
 
@@ -499,6 +344,185 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    новые координаты
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="isEqualTo"><span class="type-signature"></span>isEqualTo<span class="signature">(coordForCheck)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    проверяем равны ли две позиции(текущие и coordForCheck)
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>coordForCheck</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">координаты которые необходимо добавить</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Position.js.html">Position.js</a>, <a href="Position.js.html#line39">line 39</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    true-координаты равны, false -координаты не равны
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Boolean</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 

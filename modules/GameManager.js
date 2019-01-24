@@ -7,19 +7,34 @@ import Position from './Position.js';
  * @module GameManager
  *
  */
+
+
+/** @const {Number} maxValueInTheGame максимальное значение для tile.value в игре */
 const maxValueInTheGame = 2048;
+
+/** @const {Number} minValueInTheGame минимальное значение для tile.value в игре */
 const minValueInTheGame = 2;
+
+/** @const {Number} ratioForMergingValues коэффициент увеличения tile.value при слияния двух одинаковых tile  */
 const ratioForMergingValues = 2;
+
+/** @const {Number} oddsForAppearanceTileWithMinValue вероятность появления tile со значением minValueInTheGame  */
 const oddsForAppearanceTileWithMinValue = 0.9;
+
+/** @const {Number} startScore начальное значение для score  */
 const startScore = 0;
+
+/** @const {Number} startTilesOnTheField кол-во не пустых ячеек, на начало игры  */
 const startTilesOnTheField = 1;
+
+/** @const {Number} sizeColAndRowInGameGrid кол-во колонок и столбцов на поле(размер двумерного массива, который представляет поле)  */
 const sizeColAndRowInGameGrid = 4;
 
 
 class GameManager {
   /**
    * действия на игровом оле
-   * @param {Object} inputManager  вводимые данные- события мыши и т.д(для управления)
+   * @param {Object} inputManager  ввод и прослушивание событий
    * @param {Object} actuator  отрисовка html
    * @param {Number} startTiles  кол-во начальных клеток
    * @param {Number} size  размер квадрата представляющий игровое поле
@@ -30,7 +45,7 @@ class GameManager {
     this.actuator = new Actuator;
     this.startTiles = startTilesOnTheField;
     this.size = sizeColAndRowInGameGrid;
-    this.inputManager.on('gameLogic', this.gameLogic.bind(this));//устанавливаем callback для  inputManager, на действие 'move'
+    this.inputManager.on('gameLogic', this.gameLogic.bind(this));//устанавливаем callback для  inputManager, на действие 'gameLogic'
     this.inputManager.on('restart', this.restart.bind(this));//устанавливаем callback для  inputManager, на действие 'restart'
     this.setup();
   }
@@ -45,7 +60,7 @@ class GameManager {
 
 
   /**
- * подготовка перед началом игры
+ * создаёт new Grid, задаёт стартовые парметры, добавляет стартовые клетки и всё это прорисовывает на поле 
 */
   setup() {
     this.grid = new Grid(this.size)
@@ -59,6 +74,7 @@ class GameManager {
 
   }
 
+
   /**
 * добавляет стартовые tile в зависимости от их количества (this.startTiles)
 */
@@ -70,7 +86,7 @@ class GameManager {
 
 
   /**
-* подготавливает ячейку к следующему ходу
+* сохраняем текущую позицию, обнуляем данные о слиянии для всех клеток
 */
   prepareTiles() {
     this.grid.forEachCell((x, y, tile) => {
@@ -83,7 +99,7 @@ class GameManager {
 
 
   /**
-* добавляем tile в свободное место
+* находим свободное место и добавляем туда клетку со значением зависящем от веростности oddsForAppearanceTileWithMinValue
 */
   addRandomTile() {
     if (this.grid.isCellsAvailable()) {
@@ -101,7 +117,9 @@ class GameManager {
   }
 
   /**
-* переставляем tile в необходимую ячейку в массиве который представляет игровое поле
+* переставляем tile (и обновляем её положение) в необходимую ячейку в массиве, который представляет игровое поле, и удаляем с прошлой позиции 
+* @param {Object} tile ячейка которую необходимо переставить,
+* @param {Object} cell координаты на поле куда её необходимо переставить 
 */
   moveTile(tile, cell) {
     this.grid.cells[tile.y][tile.x] = null;
@@ -110,8 +128,8 @@ class GameManager {
   }
 
   /**
-* отвечает за передвижение внутри массива представляющего игровое поле а  так же слияние и состояние выгрыша и пройгрыша
-* @param {Number} direction число которое представлет направление движения см.Input.js
+* отвечает за всю игровую логику(запуск передвижений, состояние выйгрыша пройгрыша, отрисовка, добавление новой клетки)
+* @param {Object} vector отражает вектор направления с данными полученных из inputManager 
 */
   gameLogic(vector) {
     if (this.over || this.won) return
@@ -129,6 +147,10 @@ class GameManager {
   }
 
 
+  /**
+* отвечает за передвижение клетки в двумерном массиве и слияние клеток с равнми значениями
+* @param {Object} vector отражает вектор направления с данными 
+*/
   move(vector) {
     let traversals = this.buildTraversals(vector)
     this.wasMoved = false;
@@ -166,12 +188,10 @@ class GameManager {
 
 
 
-
-
   /**
-* в каком порядке перебираем клетки
-* @param {Object} vector какие кординаты будут меняться при соответствующих направления движения
-* @return {Object} в каком порядке делать перебор
+* находим массив отражающий порядок перебора клеток в двумерном массиве
+* @param {Object} vector  отражает вектор направления с данными(какие координаты будут меняться при том или ином направлении, а так же отражает наличие положительных значений, т.е движется ли вектор вниз или вправо)
+* @return {Object} отражает порядок перебора клеток в двумерном массиве
 */
   buildTraversals(vector) {
     let traversals = { x: [], y: [] };
@@ -191,8 +211,8 @@ class GameManager {
 
 
   /**
-* находим самую дальнюю доступную для передвижения точку
-* @param {Object} cell текущие координаты клетки 
+* находим самую дальнюю доступную для передвижения точку, а так же следующую за ней, пока не встретим препятствие или пока не выыйдем за границы поля
+* @param {Object} cell текущие координаты клетки которую проверям 
 * @param {Object} vector какие кординаты будут меняться при соответствующих направления движения
 * @return {Object} самое дальнне положение без препятствий и следующее за ним
 */
@@ -215,16 +235,16 @@ class GameManager {
 
 
   /**
-* остались ещё ходы или нет, т.е когда есть свободные клетки или можно выполнить слияние
-* @return {Boolean} 
+* проверят наличие доступных ходов(остались свободные клетки или на поле есть две рядом стоящие клетки с одинаковым значением)
+* @return {Boolean} true- отражает наличие хода,  false - доступных ходов нет 
 */
   movesAvailable() {
     return this.grid.isCellsAvailable() || this.tileMatchesAvailable();
   }
 
   /**
-* можно выполнить слияние?
-* @return {Boolean} 
+* есть ли места на игрвом поле где рядом находятся две одинакове по значению клетки 
+* @return {Boolean} true- такие места есть ,  false - таких мест нет 
 */
   tileMatchesAvailable() {
     let tile;

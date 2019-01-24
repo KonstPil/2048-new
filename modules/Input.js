@@ -3,6 +3,9 @@
  * @module InputManager
  *
  */
+
+/** @const {Object} directionVector отражает векторы направления с данными(какие координаты будут меняться при том или ином направлении, а так же отражает наличие положительных значений, т.е движется ли вектор вниз или вправо)*/
+
 const directionVector = {
   right: { x: 1, y: 0, hasPositiveCoord: true },
   left: { x: -1, y: 0, hasPositiveCoord: false },
@@ -27,18 +30,18 @@ class InputManager {
 
   /**
   * устанавливаем события и для каждого соответствующий callback
-  * @param {String} event событие 
-  * @param {Function} callback соответствующий событие callback
+  * @param {String} event название события 
+  * @param {Function} callback соответствующий событию callback
  */
   on(event, callback) {
     this.events[event] = callback;
   }
 
   /**
-  * устанавливаем прослушивание основных событий и запуск соответствующие функции
+  * устанавливаем прослушивание основных событий и запуск соответствующие функций при их, а так же создание массива со всеми направленияеми
  */
   init() {
-    this.createOneArrayForDirections()
+    this.createArrayForDirections()
     //анимация в процессе или нет, transition не проверяем т.к он проходит быстрее чем анимация
     let animationEnd = true;
     document.addEventListener('animationstart', function () {
@@ -82,8 +85,9 @@ class InputManager {
 
 
   /**
-    *обрабатываем полученный координаты нажатий мыши, и передаём нужный массив в метод действия 
+    * находим вектор направления движения 
     * @param {Object} coordDownAndUp содержит координаты нажатия и отпускания мыши 
+    * @return {Object} отражает какие координаты будут меняться при том или ином направлении, а так же отражает наличие положительных значений, т.е движется ли вектор вниз или вправо
   */
   findDirectionVector(coordDownAndUp) {
     let xVector = coordDownAndUp.xDown > coordDownAndUp.xUp;
@@ -102,14 +106,19 @@ class InputManager {
   }
 
 
-  createOneArrayForDirections() {
+  /**
+    * создаём массив из существующих векторов движения
+  */
+  createArrayForDirections() {
     for (let i in directionVector) {
       this.directionVectors.push(directionVector[i])
     }
   }
 
   /**
-    *запускаем callback - функцию move, которую задаем в gameManager и передаем значение нажатой клавиши
+    *запускаем callback  - 'gameLogic', которую задаем в gameManager
+    * @param {String} event название события 
+    * @param {Object} data аргумент для cb
   */
   start(event, data) {
     let callback = this.events[event];
@@ -118,6 +127,7 @@ class InputManager {
 
   /**
     *запускаем callback - функцию restart, которую задаем в gameManager
+    * @param {Object} event событие
   */
   restart(event) {
     event.preventDefault();

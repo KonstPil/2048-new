@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: Position.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,61 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: Position.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * описывает действия с координатами 
+ * @module Position
+ *
+ */
 
 
-    <h3> </h3>
+class Position {
+  /**
+  * координаты 
+  * @param {Number} x  значение координаты х
+  * @param {Number} y  значение координаты y
+  */
+  constructor(cellCoord) {
+    this.x = cellCoord.x;
+    this.y = cellCoord.y;
+  }
 
 
+  /**
+* добавляем координаты coordForAdd к текущим
+* @param {Object} coordForAdd координаты которые необходимо добавить 
+* @return {Object} новые координаты 
+*/
+  addCoord(coordForAdd) {
+    let newCoord = {
+      x: this.x + coordForAdd.x,
+      y: this.y + coordForAdd.y,
+    }
+    return newCoord;
+  }
 
+  /**
+* проверяем равны ли две позиции(текущие и coordForCheck)
+* @param {Object} coordForCheck координаты которые необходимо добавить 
+* @return {Boolean} true-координаты равны, false -координаты не равны
+*/
 
+  isEqualTo(coordForCheck) {
+    return this.x === coordForCheck.x &amp;&amp; this.y === coordForCheck.y
+  }
+}
 
-
-
-
-
-
-    
-
-
-
-
-
+export default Position;</code></pre>
+        </article>
+    </section>
 
 
 

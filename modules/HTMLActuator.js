@@ -22,9 +22,9 @@ class HTMLActuator {
 
 
   /**
- * перерисовка html
+ * управление актуализации информацией на поле 
  * @param {Object} grid представлет игровое поле  
- * @param {Object} data данные о счёте и выйгрыше пройгрыше 
+ * @param {Object} data данные о счёте и выйгрыше, пройгрыше 
 */
   actuate(grid, data) {
     //дожидаемся обновления окна 
@@ -48,7 +48,7 @@ class HTMLActuator {
   }
 
   /**
-  * удаляем все данные из container
+  * удаляем всех потомков указанного container
   * @param {HTMLElement} container HTML элемент у которого необходимо удалить всех child
  */
   clearContainer(container) {
@@ -59,7 +59,7 @@ class HTMLActuator {
 
 
   /**
-  * перерисовываем ячейку с добавлением анимаций передвижения, появления, слияния
+  * создание ячейки с добавлением анимаций передвижения, появления, слияния, а так же добавление на поле 
   * @param {Object} tile не пустая ячейка которую необходимо перерисовать
  */
   addTile(tile) {
@@ -99,16 +99,17 @@ class HTMLActuator {
 
   /**
  * добавляет 1 к x and y чтобы совпало с css классами т.к у нас положения начинаются с 0
- * @param {Object} position координаты 
+ * @param {Object} position текущие координаты 
+ * @return {Object} координаты для использования классов css
 */
   normalizePosition(position) {
     return { x: position.x + 1, y: position.y + 1 }
   }
 
   /**
-* находим css классы с положением 
-* @param {Object} position координаты 
-* @return css классы
+* находим css классы для заданной позиции
+* @param {Object} position текущие координаты 
+* @return {String} css классы
 */
   positionClass(position) {
     let cssPosition = this.normalizePosition(position);

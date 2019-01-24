@@ -18,7 +18,7 @@ class Grid {
   }
 
   /**
-   * формируем массив this.cells все значения на данном этапе null
+   * формируем двумерны массив this.cells все значения на данном этапе null
   */
   build() {
     for (let y = 0; y < this.size; y++) {
@@ -36,9 +36,9 @@ class Grid {
   */
   randomAvailableCell() {
     let cells = this.availableCells();
+
     if (cells.length) {
       return cells[Math.floor(Math.random() * cells.length)];
-
     }
   }
 
@@ -59,7 +59,7 @@ class Grid {
 
 
   /**
-  * @return {Boolean} остались свободные клетки или нет
+  * @return {Boolean} остались свободные места на поле или нет 
  */
   isCellsAvailable() {
     return !!this.availableCells().length;
@@ -80,8 +80,8 @@ class Grid {
 
 
   /**
- * вставляем переданную клетку в игровую сетку
- * @param {Object} tile представляет клетку со всеми координатами
+ * вставляем переданную клетку в двумерный массив this.cells
+ * @param {Object} tile представляет клетку со всеми данными 
 */
   insertTile(tile) {
     this.cells[tile.y][tile.x] = tile;
@@ -89,8 +89,8 @@ class Grid {
 
 
   /**
-* удаляет клетку из игровой сетки
-* @param {Object} tile представляет клетку со всеми координатами
+* удаляет клетку из двумерного массива this.cells
+* @param {Object} tile  представляет клетку со всеми данными 
 */
   deleteTile(tile) {
     this.cells[tile.y][tile.x] = null;
@@ -99,8 +99,8 @@ class Grid {
 
   /**
 * проверяет находится ли данная позиция в пределах игрового поля
-* @param {Object} position представляет координаты x,y
-* @return {Boolean} в пределах или нет
+* @param {Object} position представляет координаты x,y(col, row)
+* @return {Boolean} находится в пределах или нет
 */
   isWithinBoundary(position) {
     return position.x >= 0 && position.x < this.size && position.y >= 0 && position.y < this.size;
@@ -109,7 +109,7 @@ class Grid {
   /**
   * проверям что внутри клетки с заданными координатами
   * @param {Object} position представляет координаты x,y
-  * @return {Object} Tile если клетка не пустая или null если пустая
+  * @return {Object} Tile со всеми данными, если клетка не пустая или null если пустая
   */
   whatIsCellContent(position) {
     if (this.isWithinBoundary(position)) {
@@ -122,7 +122,7 @@ class Grid {
   /**
 * проверяет занята данная клетка или нет
 * @param {Object} position координаты клетки которую проверяем 
-* @return {Boolean} занята клетка или нет
+* @return {Boolean} true - клетка занята или false -клетка свободна
 */
   isCellOccupied(position) {
     return !!this.whatIsCellContent(position)
@@ -130,9 +130,9 @@ class Grid {
 
 
   /**
-  * свободна клетка или нет 
+  * проверяет свободна данная клетка или нет
   * @param {Object} position координаты клетки которую проверяем 
-  * @return {Boolean} свободна клетка или нет
+  * @return {Boolean} true - клетка свободна или false -клетка занята
   */
   isCellAvailable(position) {
     return !this.isCellOccupied(position)
