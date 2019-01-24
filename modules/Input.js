@@ -3,16 +3,25 @@
  * @module InputManager
  *
  */
+const directionVector = {
+  right: { x: 1, y: 0, hasPositiveCoord: true },
+  left: { x: -1, y: 0, hasPositiveCoord: false },
+  up: { x: 0, y: -1, hasPositiveCoord: false },
+  down: { x: 0, y: 1, hasPositiveCoord: true }
+}
+
+
 
 class InputManager {
   /**
    * отвечает за управление
    * @param {Object} events  содержит события и callback для них
-   * @param {Function} listen после создания поля сразу устанавливает события которые мы прослушиваем
+   * @param {Function} init после создания поля сразу устанавливает события которые мы прослушиваем
    */
   constructor() {
     this.events = {};
-    this.listen();
+    this.directionVectors = [];
+    this.init();
   }
 
 
@@ -28,7 +37,8 @@ class InputManager {
   /**
   * устанавливаем прослушивание основных событий и запуск соответствующие функции
  */
-  listen() {
+  init() {
+    this.createOneArrayForDirections()
     //анимация в процессе или нет, transition не проверяем т.к он проходит быстрее чем анимация
     let animationEnd = true;
     document.addEventListener('animationstart', function () {
@@ -47,6 +57,7 @@ class InputManager {
         mouseCoord.yDown = e.clientY;
       }
     });
+
     //находим координаты при отпускани кнопки
     document.addEventListener('mouseup', (e) => {
       e.preventDefault();
@@ -54,10 +65,11 @@ class InputManager {
         mouseCoord.xUp = e.clientX;
         mouseCoord.yUp = e.clientY;
       }
-      let whichDirection = this.findDirection(mouseCoord);
+      let whichDirection = this.findDirectionVector(mouseCoord);
       if (whichDirection !== undefined && animationEnd) {
         this.start('move', whichDirection);
       }
+      mouseCoord = {};
     });
 
 
@@ -73,24 +85,28 @@ class InputManager {
     *обрабатываем полученный координаты нажатий мыши, и передаём нужный массив в метод действия 
     * @param {Object} coordDownAndUp содержит координаты нажатия и отпускания мыши 
   */
-  findDirection(coordDownAndUp) {
+  findDirectionVector(coordDownAndUp) {
     let xVector = coordDownAndUp.xDown > coordDownAndUp.xUp;
     let yVector = coordDownAndUp.yDown > coordDownAndUp.yUp;
     let xDiff = Math.abs(coordDownAndUp.xDown - coordDownAndUp.xUp);
     let yDiff = Math.abs(coordDownAndUp.yDown - coordDownAndUp.yUp);
-    if (!xVector && xDiff >= yDiff) {
-      return 1//right
+    if (!xVector && xDiff > yDiff) {
+      return directionVector.right
     } else if (xVector && xDiff > yDiff) {
-      return 3//left
-    } else if (!yVector && yDiff >= xDiff) {
-      return 2//down
+      return directionVector.left
+    } else if (!yVector && yDiff > xDiff) {
+      return directionVector.down
     } else if (yVector && yDiff > xDiff) {
-      return 0//up
+      return directionVector.up
     }
   }
 
 
-
+  createOneArrayForDirections() {
+    for (let i in directionVector) {
+      this.directionVectors.push(directionVector[i])
+    }
+  }
 
   /**
     *запускаем callback - функцию move, которую задаем в gameManager и передаем значение нажатой клавиши

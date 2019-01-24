@@ -6,6 +6,11 @@ import Grid from './Grid.js';
  * @module GameManager
  *
  */
+const maxValueInTheGame = 2048;
+const minValueInTheGame = 2;
+const ratioForMergingValues = 2;
+const oddsForAppearanceTileWithMinValue = 0.9;
+
 
 class GameManager {
   /**
@@ -78,7 +83,7 @@ class GameManager {
 */
   addRandomTile() {
     if (this.grid.isCellsAvailable()) {
-      let value = Math.random() > 0.9 ? 4 : 2;
+      let value = Math.random() > oddsForAppearanceTileWithMinValue ? minValueInTheGame * ratioForMergingValues : minValueInTheGame;
       let tile = new Tile(this.grid.randomAvailableCell(), value);
       this.grid.insertTile(tile);
     }
@@ -104,9 +109,8 @@ class GameManager {
 * отвечает за передвижение внутри массива представляющего игровое поле а  так же слияние и состояние выгрыша и пройгрыша
 * @param {Number} direction число которое представлет направление движения см.Input.js
 */
-  move(direction) {
+  move(vector) {
     if (this.over || this.won) return
-    let vector = this.getVector(direction);
     let traversals = this.buildTraversals(vector)
     let moved = false;
 
@@ -122,7 +126,7 @@ class GameManager {
           let next = this.grid.whatIsCellContent(positions.next)
 
           if (next && next.value === tile.value && !next.mergedFrom) {
-            let merged = new Tile(positions.next, tile.value * 2);
+            let merged = new Tile(positions.next, tile.value * ratioForMergingValues);
             merged.mergedFrom = [tile, next]
             this.grid.insertTile(merged);
             this.grid.deleteTile(tile);
@@ -130,7 +134,7 @@ class GameManager {
 
             this.score += merged.value;
 
-            if (merged.value === 2048) this.won = true;
+            if (merged.value === maxValueInTheGame) this.won = true;
           } else {
             this.moveTile(tile, positions.farthest);
           }
@@ -151,21 +155,6 @@ class GameManager {
   }
 
   /**
-* получаем вектор движения
-* @param {Number} direction число которое представлет направление движения см.Input.js
-* @return {Object} какие кординаты будут меняться при соответствующих направления движения
-*/
-  getVector(direction) {
-    let map = {
-      0: { x: 0, y: -1 },//up
-      1: { x: 1, y: 0 },//right
-      2: { x: 0, y: 1 },//down
-      3: { x: -1, y: 0 }//left
-    }
-    return map[direction]
-  }
-
-  /**
 * в каком порядке перебираем клетки
 * @param {Object} vector какие кординаты будут меняться при соответствующих направления движения
 * @return {Object} в каком порядке делать перебор
@@ -178,9 +167,11 @@ class GameManager {
       traversals.y.push(pos)
     }
 
-    //нужно чтобы перебор всегда шёл с самой дальней точки
-    if (vector.x === 1) traversals.x = traversals.x.reverse();
-    if (vector.y === 1) traversals.y = traversals.y.reverse();
+    //нужно чтобы перебор всегда шёл с самой дальней точки, поэтому мы для направлений с положительным направлением переворачиваем массив перербора 
+    if (vector.hasPositiveCoord) {
+      traversals.x = traversals.x.reverse();
+      traversals.y = traversals.y.reverse();
+    }
     return traversals;
   }
 
@@ -232,10 +223,10 @@ class GameManager {
       for (let x = 0; x < this.size; x++) {
         tile = this.grid.whatIsCellContent({ x: x, y: y });
         if (tile) {
-          for (let direction = 0; direction < 4; direction++) {
-            let vector = this.getVector(direction);
+          let directions = this.inputManager.directionVectors;
+          for (let i = 0; i < directions.length; i++) {
+            let vector = directions[i];
             let cell = { x: x + vector.x, y: y + vector.y };
-
             let other = this.grid.whatIsCellContent(cell);
             if (other && other.value === tile.value) {
               return true;
